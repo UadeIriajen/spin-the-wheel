@@ -93,8 +93,61 @@ const transpose = (reels) => {
     return rows;
 };
 
-let balance = deposit();
-const numberOfLines = getNumberOfLines();
-const bet = getBet(balance, numberOfLines);
-const reels = spin();
-const rows = transpose(reels);
+const printRows = (rows) => {
+    for (const row of rows) {
+        let rowString = ""; // Initialize an empty string to hold the row representation
+        for (const [i, symbol] of row.entries()) { // Use entries() to get both index and symbol
+            rowString += symbol; // Append the symbol to the row string
+            if (i != row.length - 1) { // Check if it's not the last symbol in the row
+                rowString += " | "; // Append a separator if it's not the last symbol
+            }
+        }
+        console.log(rowString);
+    }
+};
+
+const getWinnings = (rows, bet, lines) => {
+    let winnings = 0;
+    for (let row = 0; row < lines; row++) {
+        const symbols = rows[row];
+        let allSame = true;
+        for (const symbol of symbols) {
+            if (symbol !== symbols[0]) {
+                allSame = false;
+                break;
+            }
+            }
+        if (allSame) {
+            winnings += bet * SYMBOLS_VALUES[symbols[0]];
+        }
+    }
+    return winnings;
+};
+
+
+const game = () => {
+    let balance = deposit();
+
+    while (true) {
+        console.log("You have a balance of $" + balance.toString());
+        console.log("You have a balance of $" + balance.toString());
+        const numberOfLines = getNumberOfLines();
+        const bet = getBet(balance, numberOfLines);
+        const reels = spin();
+        const rows = transpose(reels);
+        printRows(rows);
+        const winnings = getWinnings(rows, bet, numberOfLines);
+        balance += winnings;
+            console.log("You won, $" + winnings.toString());
+
+            if (balance <= 0) {
+                console.log("You ran out of money!");
+                break;
+            }
+            const playAgain = prompt("Do you want to play again (y/n)? ");
+            if (playAgain != "y") break;
+        }
+        
+
+    }
+game();
